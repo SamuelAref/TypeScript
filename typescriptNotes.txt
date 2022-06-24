@@ -1,0 +1,828 @@
+What is TypeScript?
+
+    - Alternative of javaScript
+    - superset of javaScript
+    - supports more features
+    - allows to use strict types 
+    - Browsers DO NOT! understand typescript , so we need a typescript compiler
+
+
+Environment Setup 
+
+    - Install node
+    - on cmd, npm install -g typescript 
+
+
+Conversion and Running a typescript file
+
+    on the terminal - tsc sandbox.ts sandbox.js 
+                    - this works if the js and ts files have the same name 
+
+                    - if it's not the same name or doesn't exist, we say tsc sandbox.ts
+
+
+                    - here the scipt might not work the first time there are some commands on the internet that will fix this issue it's with the powershell
+                    - or you  could just say tsc sandbox.ts --allowJs
+
+                    - running the tsc command everytime we want to compile a ts file is tedious, so we can run the command sandbox.ts --allowJs -w
+
+
+Type Basics (specify data types in functions)
+
+        let character = 'Mario';
+
+        let age = 30;
+
+        character = "hey";
+
+
+        const circ = (diameter:number) =>{
+
+            return diameter * Math.PI;
+        }
+
+        console.log(circ(2));
+
+
+Arrays  and Objects
+
+    - in arrays you can't add various types of data at the same time like js
+    - in order to do this, the various data types must be present in the declaration of the array
+    - also in arrays and in objects, remember that typescript is a strict version of data type so if a data is one type you can't under any circumstances change it 
+
+    
+        //arrays 
+
+            let names = ['sami', 'can', 'do'];
+
+            names.push('hi');
+
+            console.log(names);
+
+
+            let mixed = ['ken', 2];
+
+
+
+        //objects
+
+            let ninja = {
+
+                name :' sami ',
+                belt: 'blue',
+                age : 5
+            }
+
+            ninja.age = 39;
+
+
+Explicit Types 
+
+    //explicit variable types
+        let character:string;
+        let age : number;
+        let isLive : boolean;
+
+    //explicit arrays 
+        let ninjas:string [];
+        //let ninjas:string [] = []; declare to use push method
+
+    //union types ( it could be one data type or more)
+        let uId : string|number;
+        let mixed:(string|number)[] = []; //can be string or number
+
+    //objects  
+        let ninjaOne : object; // specifies type object without specifying the data type
+        ninjaOne = {name : 'sami', age : 20}
+
+        let ninjaTwo : { // to specify the data type inside it
+            name : string,
+            age : number,
+        }
+
+
+Dynamic Types (Any types)
+
+    - the variable can be any type now or in the future
+  
+        let age:any = 'no';
+        age = 4;
+
+        console.log(age);
+
+        let mixed:any[] = [];
+        mixed.push(2);
+        mixed.push('hi');
+
+        console.log(mixed);
+
+        let ninja:{ name : any, age: any}
+        ninja = { name : 'hi', age : 'no'}
+
+
+Better Workflow & tsconfig
+
+    - we moved all the static files (html, css and js) into a public folder
+    - then we moved the ts file into src folder
+    - the we tsc --init , to get a json file, then we changed the outDir to public, and rootDir to src 
+    - then we ran the command tsc only, or tsc -w
+    - to not compile any ts files outside of the src folder, we add "include":["src] at the end of json file 
+
+
+Function Basics
+
+    - Just like variables, arrays and objects, functions vary only slightly 
+    
+        let greet:Function;
+
+        greet = () =>{
+
+            console.log('hi');
+        }
+
+
+        const add = ( a:number, b:number, c?:number|string) =>{ // question mark signifies optional parameters 
+
+
+            console.log(a + b);
+        }
+
+        add(2,3);
+
+
+        const minus = (a: number, b: number) =>{
+
+            return a + b;
+        }
+
+        let result = minus(10,5);
+
+
+Type Aliases
+
+    - Aliases are used to represent tedious data type declarations , by the syntax "type"
+
+        type StringOrNum = string | number;
+        type objWithName = { name:string, uid: StringOrNum}
+
+        // const logDetails = (uid: string | number, item : string) =>{
+
+        //     console.log(`${item} has a uid of ${uid}`);
+        // }
+
+        const logDetails = (uid: StringOrNum, item : string) =>{
+
+            console.log(`${item} has a uid of ${uid}`);
+        }
+
+        const greet = (user: objWithName) =>{
+
+            console.log(`${user.name} says hello`);
+        }
+
+
+Function Signatures 
+
+    - here, we set a signature function that can be used as a template for other functions 
+
+                
+        // let greet:Function;
+
+
+        //example 1
+
+            let greet : ( a:string, b:string) => void;
+
+            greet = (name : string, greeting: string) =>{
+
+                console.log(`${name} says ${greeting}`);
+            }
+
+        //example 2
+
+            let calc : (a:number, b: number, c:string) => number;
+
+            calc = (numOne: number, numTwo: number, action : string) =>{
+
+                if(action == 'add'){
+
+                    return numOne + numTwo;
+                }
+                else {
+
+                    return numOne - numTwo;
+                }
+            }
+
+        //example 3
+
+            let logDetails : (obj: {name:string, age:number}) => void;
+
+            type person = {name : string, age : number}
+
+            logDetails = (ninja : person) =>{
+
+                console.log(`${ninja.name} is ${ninja.age} years old`);
+            }
+
+
+DOM & Type Casting
+
+    - in dom, typescript doesn't have access to manipulate the dom directly so we need to change some things;
+    - so we can add an exclamation mark to let it know it's not null
+    - typescript specifically knows the element we access
+
+
+    
+        // const anchor = document.querySelector('a')!;
+
+        // console.log(anchor.href);
+
+        // const form = document.querySelector('form')!;
+
+        // console.log(form);
+
+        //typecasting 
+
+        //cast the element to be a specific element 
+
+        const form = document.querySelector('.new-item-form') as HTMLFormElement;
+        console.log(form.children);
+
+        //inputs 
+
+        const type = document.querySelector('#type') as HTMLSelectElement;
+        const tofrom = document.querySelector('#tofrom') as HTMLInputElement;
+        const details = document.querySelector('#details') as HTMLInputElement;
+        const amount = document.querySelector('#amount') as HTMLInputElement;
+
+        form.addEventListener('submit', (e: Event) =>{
+
+            e.preventDefault();
+
+            console.log(
+                type.value,
+                tofrom.value,
+                details.value,
+                amount.valueAsNumber //we can set as number
+            );
+        })
+
+
+Classes
+
+    - normal as other languages 
+    - but we can also make our class as a datattype that specific types like the below example ,
+    - this is awesome 
+
+
+            //Classes 
+
+        class Invoice {
+
+            client:string;
+            details : string;
+            amount: number;
+
+            constructor(c:string, d : string, a : number){
+
+                this.client = c;
+                this.details = d;
+                this.amount = a;
+
+            }
+
+            format() {
+
+                return `${this.client} owes $${this.amount} for ${this.details}`
+            }
+            
+        }
+
+
+        const invOne = new Invoice('samuel', 'developed',300);
+
+        let invoices: Invoice[] = []; // only invoice objects can be added in this array 
+
+        invoices.push(invOne)
+
+
+
+        /////
+
+        const form = document.querySelector('.new-item-form') as HTMLFormElement;
+        console.log(form.children);
+
+
+
+        //inputs 
+
+        const type = document.querySelector('#type') as HTMLSelectElement;
+        const tofrom = document.querySelector('#tofrom') as HTMLInputElement;
+        const details = document.querySelector('#details') as HTMLInputElement;
+        const amount = document.querySelector('#amount') as HTMLInputElement;
+
+        form.addEventListener('submit', (e: Event) =>{
+
+            e.preventDefault();
+
+            console.log(
+                type.value,
+                tofrom.value,
+                details.value,
+                amount.valueAsNumber //we can set as number
+            );
+        })
+
+
+Public, Private & Readonly
+
+    public - accessed and changed from anywhere
+    private - accessed and changed from inside class
+    readonly - accessed but not changed 
+
+
+
+        //class attribute modifiers 
+
+            class Invoice {
+
+                // readonly client:string; // can be accessed from anywhere but can't be changed 
+                // private details : string;// can only be accessed inside the class
+                // amount: number;
+
+                constructor( // we can use this only when there are modifiers
+                    readonly client : string,
+                    private details : string,
+                    public amount : number
+                ){
+
+                
+                }
+
+                format() {
+
+                    return `${this.client} owes $${this.amount} for ${this.details}`
+                }
+                
+            }
+
+
+            const invOne = new Invoice('samuel', 'developed',300);
+            const invTwo = new Invoice('garry', 'ran', 200);
+
+            let invoices: Invoice[] = []; // only invoice objects can be added in this array 
+
+            invoices.push(invOne);
+            invoices.push(invTwo);
+
+            invoices.forEach(inv => {
+
+                console.log(inv.client, inv.amount, inv.format());
+            })
+
+            /////
+
+            const form = document.querySelector('.new-item-form') as HTMLFormElement;
+            console.log(form.children); 
+
+
+
+            //inputs 
+
+            const type = document.querySelector('#type') as HTMLSelectElement;
+            const tofrom = document.querySelector('#tofrom') as HTMLInputElement;
+            const details = document.querySelector('#details') as HTMLInputElement;
+            const amount = document.querySelector('#amount') as HTMLInputElement;
+
+            form.addEventListener('submit', (e: Event) =>{
+
+                e.preventDefault();
+
+                console.log(
+                    type.value,
+                    tofrom.value,
+                    details.value,
+                    amount.valueAsNumber //we can set as number
+                );
+            })
+
+
+Modules
+
+    - To make usage of files easier we use import and export 
+    - First we opened the typescript  tsconfig.json file then we changed the module to "es2015", and also the target as "es2016" or "es6"
+    - then we change the html document js import and set the type = "module"
+    - then we create a new file then put the content we want to export , then we write export infront of it 
+    - then we import it by import {what we want to export} form 'directory/ filename.js' , here it is .js not .ts because it will be compiled 
+    - the drawback is that it may not be supported by older browsers and also it access more files 
+
+
+    app.ts file 
+
+        import {Invoice} from './classes/invoice.js'
+
+
+        const invOne = new Invoice('samuel', 'developed',300);
+        const invTwo = new Invoice('garry', 'ran', 200);
+
+        let invoices: Invoice[] = []; // only invoice objects can be added in this array 
+
+        invoices.push(invOne);
+        invoices.push(invTwo);
+
+        invoices.forEach(inv => {
+
+            console.log(inv.client, inv.amount, inv.format());
+        })
+
+
+
+        /////
+
+        const form = document.querySelector('.new-item-form') as HTMLFormElement;
+        console.log(form.children); 
+
+
+
+        //inputs 
+
+        const type = document.querySelector('#type') as HTMLSelectElement;
+        const tofrom = document.querySelector('#tofrom') as HTMLInputElement;
+        const details = document.querySelector('#details') as HTMLInputElement;
+        const amount = document.querySelector('#amount') as HTMLInputElement;
+
+        form.addEventListener('submit', (e: Event) =>{
+
+            e.preventDefault();
+
+            console.log(
+                type.value,
+                tofrom.value,
+                details.value,
+                amount.valueAsNumber //we can set as number
+            );
+        })
+
+
+    classes/invoice.ts file 
+
+        //Classes 
+
+        export class Invoice {
+
+            constructor( // we can use this only when there are modifiers
+                readonly client : string,
+                private details : string,
+                public amount : number
+            ){
+
+            
+            }
+
+            format() {
+
+                return `${this.client} owes $${this.amount} for ${this.details}`
+            }
+            
+        }
+
+
+Interface
+
+    - similar to class but not used to create an object only a template like oject 
+
+    example 
+
+            //interface 
+
+        interface IsPerson {
+
+            name : string;
+            age : number;
+            speak (a: string): void;
+            spend(a: number) :number;
+
+        }
+
+        const me : IsPerson = {
+            name : 'sami',
+            age : 24,
+            speak(text : string): void{
+
+                console.log(text);
+            },
+
+            spend(amount : number): number{
+
+                console.log('I spent ', amount);
+                return amount;
+            }
+        };
+
+        const greetPerson = (person : IsPerson) => {
+
+            console.log(person.name);
+        }
+
+        greetPerson(me);
+
+        console.log(me);
+
+        import {Invoice} from './classes/invoice.js'
+
+
+        const invOne = new Invoice('samuel', 'developed',300);
+        const invTwo = new Invoice('garry', 'ran', 200);
+
+        let invoices: Invoice[] = []; // only invoice objects can be added in this array 
+
+        invoices.push(invOne);
+        invoices.push(invTwo);
+
+        invoices.forEach(inv => {
+
+            console.log(inv.client, inv.amount, inv.format());
+        })
+
+
+
+        /////
+
+        const form = document.querySelector('.new-item-form') as HTMLFormElement;
+        console.log(form.children); 
+
+
+
+        //inputs 
+
+        const type = document.querySelector('#type') as HTMLSelectElement;
+        const tofrom = document.querySelector('#tofrom') as HTMLInputElement;
+        const details = document.querySelector('#details') as HTMLInputElement;
+        const amount = document.querySelector('#amount') as HTMLInputElement;
+
+        form.addEventListener('submit', (e: Event) =>{
+
+            e.preventDefault();
+
+            console.log(
+                type.value,
+                tofrom.value,
+                details.value,
+                amount.valueAsNumber //we can set as number
+            );
+        })
+
+
+Interfaces with Classes 
+
+     - this is a way that we can cleanly implement classes and interfaces 
+     - we created a payment.ts file in the classes folder 
+     - we created an interface folder and created a Has Formatter.ts file 
+     - then we implemented both the invoice and payment classes from HasFormatter interface 
+     - then we can import it to our app.ts file and use it as follows 
+
+
+     ///////
+
+     
+            import {Invoice} from './classes/invoice.js'
+            import { Payment } from './classes/Payment.js';
+            import { HasFormatter } from './interfaces/HasFormatter.js';
+
+            const form = document.querySelector('.new-item-form') as HTMLFormElement;
+            console.log(form.children); 
+
+
+
+            //inputs 
+
+            const type = document.querySelector('#type') as HTMLSelectElement;
+            const tofrom = document.querySelector('#tofrom') as HTMLInputElement;
+            const details = document.querySelector('#details') as HTMLInputElement;
+            const amount = document.querySelector('#amount') as HTMLInputElement;
+
+            form.addEventListener('submit', (e: Event) =>{
+
+                e.preventDefault();
+
+                let doc : HasFormatter;
+
+                if (type.value === 'invoice'){
+
+                    doc  = new Invoice(tofrom.value, details.value, amount.valueAsNumber);
+                }
+
+                else {
+
+                    doc = new Payment(tofrom.value, details.value, amount.valueAsNumber);
+                }
+
+                console.log(doc);
+            })
+
+
+Rendering an Html Template 
+
+    - first we create the class ListTemplate.ts
+    - then we import it as follows 
+
+    /////
+
+            import {Invoice} from './classes/invoice.js'
+        import { ListTemplate } from './classes/ListTemplate.js';
+        import { Payment } from './classes/Payment.js';
+        import { HasFormatter } from './interfaces/HasFormatter.js';
+
+        const form = document.querySelector('.new-item-form') as HTMLFormElement;
+        console.log(form.children); 
+
+
+
+        //inputs 
+
+        const type = document.querySelector('#type') as HTMLSelectElement;
+        const tofrom = document.querySelector('#tofrom') as HTMLInputElement;
+        const details = document.querySelector('#details') as HTMLInputElement;
+        const amount = document.querySelector('#amount') as HTMLInputElement;
+
+
+        // list tempate instance 
+
+        const ul = document.querySelector('ul')!;
+        const list = new ListTemplate(ul);
+
+        form.addEventListener('submit', (e: Event) =>{
+
+            e.preventDefault();
+
+            let doc : HasFormatter;
+
+            if (type.value === 'invoice'){
+
+                doc  = new Invoice(tofrom.value, details.value, amount.valueAsNumber);
+            }
+
+            else {
+
+                doc = new Payment(tofrom.value, details.value, amount.valueAsNumber);
+            }
+
+            list.render(doc, type.value, 'end');
+        })
+
+
+Generics
+
+    - Used to create a reusable block of code which can be used with different types 
+
+
+    //Generics
+
+            const addUID =<T extends object>  (obj : T) => { 
+
+                let uid = Math.floor(Math.random() * 100);
+                return {...obj, uid};
+            }
+
+            let docOne = addUID({name : 'yoshi', age: 40});
+            // let docTwo = addUID('hi');
+            // console.log(docTwo);
+            console.log(docOne);
+
+
+    // with interfaces 
+            interface Resource <T> {
+
+                uid : number;
+                resourceName : string;
+                data: T;
+            } 
+
+            const docThree : Resource <object> = {
+
+                uid: 1,
+                resourceName : 'Person',
+                data : {name : 'shaun'}
+            }
+
+            const docFour : Resource <string[]> = {
+
+                uid : 2,
+                resourceName : 'shopping ',
+                data : ['hi', 'no']
+            }
+
+            console.log(docThree);
+            console.log(docFour);
+
+
+Enums
+
+    - key words associated with number value 
+
+    // ENUMS
+
+        enum resourceType {BOOK, AUTHOR, FILM, DIRECTOR, PERSON}
+
+        interface Resource<T> {
+
+            uid: number ;
+            resourceType : resourceType;
+            data : T;
+        }
+
+        const docOne : Resource<object> = {
+
+            uid : 1,
+            resourceType : resourceType.BOOK,
+            data : {title : 'name of the wind'}
+        }
+
+        const docTwo : Resource<object> = {
+
+            uid : 10,
+            resourceType : resourceType.PERSON,
+            data: { name : 'yoshi'}
+        }
+
+        console.log(docOne);
+        console.log(docTwo);
+
+
+Tuples
+
+    - Once a position is decided as a specific data type it can't be changed 
+
+
+        
+            //tuples 
+
+                let arr = ['ryu', 25, true];
+                arr[0] = false;
+                arr[1] = 'yoshi';
+                arr = [30, false, 'yoshi'];
+
+                let tup : [string, number, boolean] = ['ryu', 2, false];
+                tup [0] = 'hi' //because the first element is a string 
+
+
+                let student : [string, number];
+                student = ['samuel', 2233];
+
+            // applying it to our code 
+
+                    import {Invoice} from './classes/invoice.js'
+                import { ListTemplate } from './classes/ListTemplate.js';
+                import { Payment } from './classes/Payment.js';
+                import { HasFormatter } from './interfaces/HasFormatter.js';
+
+                const form = document.querySelector('.new-item-form') as HTMLFormElement;
+                console.log(form.children); 
+
+
+
+                //inputs 
+
+                const type = document.querySelector('#type') as HTMLSelectElement;
+                const tofrom = document.querySelector('#tofrom') as HTMLInputElement;
+                const details = document.querySelector('#details') as HTMLInputElement;
+                const amount = document.querySelector('#amount') as HTMLInputElement;
+
+
+                // list tempate instance 
+
+                const ul = document.querySelector('ul')!;
+                const list = new ListTemplate(ul);
+
+                form.addEventListener('submit', (e: Event) =>{
+
+                    e.preventDefault();
+
+                    let values : [string, string, number] = [tofrom.value, details.value, amount.valueAsNumber]
+
+                    let doc : HasFormatter;
+
+                    if (type.value === 'invoice'){
+
+                        doc  = new Invoice(...values);
+                    }
+
+                    else {
+
+                        doc = new Payment(...values);
+                    }
+
+                    list.render(doc, type.value, 'end');
+                });
+
+
+
+
+
+
+
+
+
+
+
